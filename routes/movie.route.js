@@ -9,17 +9,29 @@ const {
   deleteMovie
 } = require("../controllers/movie.controller");
 
+const {
+  verifyToken,
+  isAdmin
+} = require("../middlewares/auth");
+
 const upload = require("../utils/upload");
 
 // get all movies
 router.get("/", getAllMovies);
 
 // get single movie
-router.get("/:id", getSingleMovie);
+router.get(
+  "/:id", 
+  verifyToken, 
+  isAdmin, 
+  getSingleMovie
+);
 
-// create movie (thumbnail + video)
+// create movie
 router.post(
   "/",
+  verifyToken,
+  isAdmin,
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "video", maxCount: 1 }
@@ -27,9 +39,11 @@ router.post(
   createMovie
 );
 
-// update movie (thumbnail + video optional)
+// update movie
 router.put(
   "/:id",
+  verifyToken,
+  isAdmin,
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "video", maxCount: 1 }
@@ -38,6 +52,11 @@ router.put(
 );
 
 // delete movie
-router.delete("/:id", deleteMovie);
+router.delete(
+  "/:id", 
+  verifyToken, 
+  isAdmin, 
+  deleteMovie
+);
 
 module.exports = router;
